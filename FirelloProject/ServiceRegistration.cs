@@ -1,4 +1,5 @@
 ﻿using FirelloProject.DAL;
+using FirelloProject.Helpers;
 using FirelloProject.Models;
 using FirelloProject.Services.Basket;
 using FirelloProject.Services.Product;
@@ -29,7 +30,9 @@ namespace FirelloProject
                 options.Lockout.AllowedForNewUsers=true;
                 options.Lockout.DefaultLockoutTimeSpan=TimeSpan.FromMinutes(20);
                 options.Lockout.MaxFailedAccessAttempts = 3;
-            }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+            }).AddEntityFrameworkStores<AppDbContext>()
+              .AddDefaultTokenProviders()
+              .AddErrorDescriber<CustomIdentityErrorDescriper>();
 
         } 
     }
