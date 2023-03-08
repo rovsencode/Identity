@@ -10,8 +10,9 @@ namespace FirelloProject.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
 
-        public AccountController(UserManager<AppUser> userManager)
+        public AccountController(UserManager<AppUser> userManager,SignInManager<AppUser> signInManager)
         {
+            _signInManager= signInManager;
             _userManager = userManager;
         }
 
@@ -23,11 +24,12 @@ namespace FirelloProject.Controllers
         [AutoValidateAntiforgeryToken]
         public async Task<IActionResult> Register(RegisterVM register)
         {
+            if (!ModelState.IsValid) return View();
             AppUser user = new();
             user.Email= register.Email;
             user.UserName = register.Username;
             user.FullName = register.FullName;
-          IdentityResult result= await _userManager.CreateAsync(user, register.Password);
+            IdentityResult result = await _userManager.CreateAsync(user, register.Password);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -39,9 +41,9 @@ namespace FirelloProject.Controllers
             //add in role
 
             //sign in
-            _signInManager.SignInAsync(user, true);
+            await _signInManager.SignInAsync(user, true);
 
-            return RedirectToAction("home","index");
+            return RedirectToAction("index", "Home");
 
         }
         public IActionResult Login()
